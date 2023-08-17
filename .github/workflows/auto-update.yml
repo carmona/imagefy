@@ -1,0 +1,65 @@
+name: Automate Release Merging
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'release/*'
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Check if PR was merged
+      id: check_merged
+      run: |
+        if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
+          echo "PR #${{ github.event.pull_request.number }} has been merged"
+          echo "::set-output name=pr_merged::true"
+        else
+          echo "PR #${{ github.event.pull_request.number }} was closed without being merged"
+          echo "::set-output name=pr_merged::false"
+        fi
+
+    - name: Get changed files
+      id: files
+      run: |
+        echo "::set-output name=changed_files::$(git diff --name-only HEAD^ HEAD)"
+    
+    - name: Determine release branches to merge into
+      id: target_branches
+      run: |
+        CHANGED_FILES="${{ steps.files.outputs.changed_files }}"
+        
+        # Check for SEMVER pattern in the branch name (release/x.y.z)
+        CURRENT_BRANCH="${GITHUB_REF#refs/heads/}"
+        CURRENT_SEMVER="${CURRENT_BRANCH#release/}"
+        
+        # Determine target branches to merge into
+        TARGET_BRANCHES=""
+        for branch in $(git branch -r --list "origin/release/*" | sed 's/origin\///'); do
+          SEMVER="${branch#release/}"
+          if [[ "$SEMVER" > "$CURRENT_SEMVER" ]]; then
+            TARGET_BRANCHES="$TARGET_BRANCHES $branch"
+          fi
+        done
+        
+        echo "::set-output name=target_branches::$TARGET_BRANCHES"
+    
+    - name: Merge changes
+      if: steps.check_merged.outputs.pr_merged == 'true'
+      run: |
+        TARGET_BRANCHES="${{ steps.target_branches.outputs.target_branches }}"
+        CURRENT_BRANCH="${GITHUB_REF#refs/heads/}"
+        for branch in $TARGET_BRANCHES; do
+          git checkout -b temp-merge-branch "$branch"
+          git merge --no-ff --no-edit "$CURRENT_BRANCH"
+          git push origin "$branch"
+          git checkout "$CURRENT_BRANCH"
+          git branch -D temp-merge-branch
+        done
