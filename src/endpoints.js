@@ -15,12 +15,13 @@ server.get('/link-meta/:encodedUrl', async (req, res) => {
 server.get('/link-preview/:size/:encodedUrl', async (req, res) => {
   const language = req.get('accept-language') || 'en-US';
   const ua = req.get('user-agent') || 'Imagefy';
+  const size = req.params.size; // Extract size from request parameters
   const metadata = await getMetaFromUrl(req.params.encodedUrl, language, ua);
   
-  const image = await getImageFromMeta(metadata);
+  const image = await getImageFromMeta(metadata, size); // Pass size to getImageFromMeta
   
   res.writeHead(200, {
-    "Content-Type": "image/jpg",
+    "Content-Type": "image/png",
   });
   
   //ending the response by sending the image buffer to the browser

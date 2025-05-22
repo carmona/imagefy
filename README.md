@@ -9,4 +9,4 @@ Its main goal is to tackle an issue in developing countries where cellular data 
 ## Method
 I'm going to extract data from the given article URL such as title, description and main photo. These will then be passed on to a simple HTML page in a headless browser just for layout purposes, and then saved as an image and returned for download.
 
-I'm using PhantomJS for this task, which at this date has already been deprecated for years. The reason for that is because it's the shortest learning curve for me as a front-end dev. Ideally, this should later be changed into using a lib dedicated to building images.
+This functionality is implemented using Puppeteer, a Node library that provides a high-level API to control Chrome/Chromium over the DevTools Protocol. Ideally, this could later be changed into using a lib dedicated to building images if more direct image manipulation is needed beyond what a headless browser offers.
