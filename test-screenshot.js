@@ -3,7 +3,7 @@ const { createScreenshot, getErrorCanvas } = require('./src/imaging.js');
 
 async function runTest() {
   console.log("Starting test for createScreenshot...");
-  const testUrl = 'https://example.com'; // Reverted to example.com
+  const testUrl = 'https://g1.globo.com/economia/noticia/2025/05/22/iof-o-que-e-o-imposto-sobre-operacoes-financeiras-e-quem-paga.ghtml'; // Reverted to example.com
   // Encode the URL to mimic how it would be passed in a real scenario
   const encodedTestUrl = encodeURIComponent(testUrl);
 

@@ -88,7 +88,7 @@ async function getImageFromMeta (metadata, size) {
 }
 
 
-function getErrorCanvas () {
+function getErrorCanvas (size) {
   // Default dimensions for error canvas, can be dynamic if needed
   let errorWidth = 800;
   let errorHeight = 800;
