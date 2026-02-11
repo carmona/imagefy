@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/carmona/imagefy#readme",
   "dependencies": {
-    "axios": "^1.9.0",
+    "axios": "^1.13.5",
     "canvas": "^3.1.0",
     "metadata-scraper": "^0.2.61",
     "puppeteer": "^24.9.0",
